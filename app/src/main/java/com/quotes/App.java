@@ -5,52 +5,131 @@ package com.quotes;
 
 import com.google.gson.Gson;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Objects;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Random;
 
 
 public class App {
 
     public static void main(String[] args) throws IOException {
-        //URL apiLink =new URL("https://codefellows.github.io/code-401-java-guide/curriculum/class-08/recentquotes.json");
-        FileReader gsonDataFile = readgson("recentquotes.json");
-        qouteAuthor[] authorsAndQouts = qouteGson(gsonDataFile);
-        for (int i = 0; i < authorsAndQouts.length; i++) {
-            if (authorsAndQouts[i].getTest()==null) {
-                continue;
-            }
-            System.out.println(authorsAndQouts[i].getTest());
-        }
-    }
+////////////////////////////////////////////////////////////////////////////////////////////////
+//                       LAB 08
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // it return the index of element from the array or qouts
+//        String gsonDataFile = readgson();
+//
+//        qouteAuthor[] authorsAndQouts = qouteGson(gsonDataFile);
+//
+//        System.out.println(authorsAndQouts[0]);
+//        int randomElement =randomQoute(authorsAndQouts.length);
+//        System.out.println(authorsAndQouts[randomElement] );
+//
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////STECH  GOALS  FOR LAB 8/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // if the lingth of args =2  i mean hear the user add auther and qute (args[0] , args[1] )
+//        if(args.length == 0){
+//        int randomElement =randomQoute(authorsAndQouts.length);
+//        }if (args.length==2){
+//            if(args[0].equals("author")){
+//            for (int i = 0; i < authorsAndQouts.length; i++) {
+//                if(authorsAndQouts[i].getAuthor().contains(args[1])){
+//                 continue;
+//                }   System.out.println(authorsAndQouts[i].getText());
+//                System.out.println(authorsAndQouts[i].toString());
+//            }
+//            }else if (args[0].equals("contains")){ // return a quote that contains that word
+//                Boolean flag = false;
+//                for (int i = 0; i < authorsAndQouts.length; i++) {
+//                    if(authorsAndQouts[i].getText().contains(args[1])){
+//                        continue;
+//                    }
+//                        System.out.println(authorsAndQouts[i].getText());
+//
+//        }
+//        }
+//    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//                       LAB 09
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+        String gsonDataFile = readgson();
+
+        ArrayList authorsAndQouts = qouteGson(gsonDataFile);
+        System.out.println(authorsAndQouts);
+            Gson gson = new Gson();
+    try {
+        URL url = new URL("http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en");
+
+        HttpURLConnection qoutUrl = (HttpURLConnection) url.openConnection();
+
+        qoutUrl.setRequestMethod("GET");
+
+        InputStreamReader dataStram = new InputStreamReader(qoutUrl.getInputStream());
+        BufferedReader bufferedReader = new BufferedReader(dataStram);
+        String qouteData = bufferedReader.readLine();
+
+        QuotesAPI quotDataObj = gson.fromJson(qouteData, QuotesAPI.class);
+        qouteAuthor quotApiCopy = new qouteAuthor(quotDataObj.getQuoteAuthor(),quotDataObj.getQuoteText());
+
+        String gsonStr =gson.toJson(quotApiCopy);
+        authorsAndQouts.add(gsonStr);
+
+    }catch (IOException e){
+        System.out.println(authorsAndQouts.get(randomQoute(authorsAndQouts.size())));
+        System.out.println(e.getMessage());
+    }
+            File qoutandAoutherFile = new File("C:\\Users\\Lenovo\\Desktop\\JAVA401\\classcode\\quotes\\app\\src\\main\\resources\\recentquotes.json");
+        try (FileWriter qoutandAouthertheFile = new FileWriter(qoutandAoutherFile)) {
+            gson.toJson(authorsAndQouts, qoutandAouthertheFile);
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
     public static int randomQoute(int lengthOfQout){
         Random random =new Random();
         int randomQoutNumber=random.nextInt(lengthOfQout);
         return randomQoutNumber;
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //this to read the data from file using filereader
-    public static FileReader readgson (String gsonFile){
-        FileReader gsonFileReader=null ;
-        try{
-            String gsonData = Objects.requireNonNull(Thread.currentThread()
-                    .getContextClassLoader().getResource(gsonFile)).getFile();
-            gsonFileReader=new FileReader(gsonData);
-        }catch (IOException exception){
-            exception.printStackTrace();
+    public static String readgson() {
+        String sumLins = "";
+        String newLine = "";
+        BufferedReader reader = null;
+
+        try {
+            reader = new BufferedReader(new FileReader("C:\\Users\\Lenovo\\Desktop\\JAVA401\\classcode\\quotes\\app\\src\\main\\resources\\recentquotes.json"));
+            newLine = reader.readLine();
+            System.out.println(newLine);
+
+            while (newLine != null) {
+                sumLins += newLine + "\n";
+                newLine = reader.readLine();
+            }
+
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
-        return gsonFileReader;
+
+        return sumLins;
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    public static qouteAuthor[] qouteGson(FileReader  gsonD){
+    public static ArrayList qouteGson(String  gsonD){
         Gson gson =new Gson ();
-        qouteAuthor[] arrayOfQouteAuthor =gson.fromJson (gsonD, qouteAuthor[].class);
-        return arrayOfQouteAuthor;
+        ArrayList qoutandAoutherstr = gson.fromJson(gsonD, ArrayList.class);
+        return qoutandAoutherstr;
     }
 }
+

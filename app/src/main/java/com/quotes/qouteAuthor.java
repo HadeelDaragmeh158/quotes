@@ -3,29 +3,26 @@ package com.quotes;
 public class qouteAuthor {
 
     String author;
-    String likes;
-    String test;
+    String text;
 
-    public qouteAuthor(String auther , String likes , String test) {
-    this.author=auther;
-    this.likes=likes;
-    this.test=test;
+    public qouteAuthor(String author, String text) {
+        this.author = author;
+        this.text = text;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public String getTest() {
-        return test;
+    public String getText() {
+        return text;
     }
 
     @Override
     public String toString() {
-        return "Qoute{" +
-                "author='" + author + '\'' +
-                ", likes='" + likes + '\'' +
-                ", test='" + test + '\'' +
+        return "{"+
+                "author='" + author +
+                "', text='" + text +
                 '}';
     }
 }
