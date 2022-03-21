@@ -18,50 +18,21 @@ public class App {
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //                       LAB 08
 ////////////////////////////////////////////////////////////////////////////////////////////////
+        Gson gsonq = new Gson();
+        String dataFile1 = readgson("C:\\Users\\Lenovo\\Desktop\\JAVA401\\classcode\\quotes\\app\\src\\main\\resources\\ recentquotes8.json");
+        qouteAuthor [] quotAoutherObj = gsonq.fromJson(dataFile1, qouteAuthor[].class);
 
-//        String gsonDataFile = readgson();
-//
-//        qouteAuthor[] authorsAndQouts = qouteGson(gsonDataFile);
-//
-//        System.out.println(authorsAndQouts[0]);
-//        int randomElement =randomQoute(authorsAndQouts.length);
-//        System.out.println(authorsAndQouts[randomElement] );
-//
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////STECH  GOALS  FOR LAB 8/////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        // if the lingth of args =2  i mean hear the user add auther and qute (args[0] , args[1] )
-//        if(args.length == 0){
-//        int randomElement =randomQoute(authorsAndQouts.length);
-//        }if (args.length==2){
-//            if(args[0].equals("author")){
-//            for (int i = 0; i < authorsAndQouts.length; i++) {
-//                if(authorsAndQouts[i].getAuthor().contains(args[1])){
-//                 continue;
-//                }   System.out.println(authorsAndQouts[i].getText());
-//                System.out.println(authorsAndQouts[i].toString());
-//            }
-//            }else if (args[0].equals("contains")){ // return a quote that contains that word
-//                Boolean flag = false;
-//                for (int i = 0; i < authorsAndQouts.length; i++) {
-//                    if(authorsAndQouts[i].getText().contains(args[1])){
-//                        continue;
-//                    }
-//                        System.out.println(authorsAndQouts[i].getText());
-//
-//        }
-//        }
-//    }
+        int randomElement = randomQoute(quotAoutherObj.length);
+        System.out.println(quotAoutherObj[randomElement]);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //                       LAB 09
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-        String gsonDataFile = readgson();
+        String gsonDataFile = readgson("C:\\Users\\Lenovo\\Desktop\\JAVA401\\classcode\\quotes\\app\\src\\main\\resources\\recentquotes.json");
 
         ArrayList authorsAndQouts = qouteGson(gsonDataFile);
-        System.out.println(authorsAndQouts);
+
             Gson gson = new Gson();
     try {
         URL url = new URL("http://api.forismatic.com/api/1.0/?method=getQuote&format=json&lang=en");
@@ -76,6 +47,10 @@ public class App {
 
         QuotesAPI quotDataObj = gson.fromJson(qouteData, QuotesAPI.class);
         qouteAuthor quotApiCopy = new qouteAuthor(quotDataObj.getQuoteAuthor(),quotDataObj.getQuoteText());
+
+        System.out.println(quotDataObj);
+
+        System.out.println(quotApiCopy);
 
         String gsonStr =gson.toJson(quotApiCopy);
         authorsAndQouts.add(gsonStr);
@@ -103,15 +78,15 @@ public class App {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static String readgson() {
+    public static String readgson(String path) {
         String sumLins = "";
         String newLine = "";
         BufferedReader reader = null;
 
         try {
-            reader = new BufferedReader(new FileReader("C:\\Users\\Lenovo\\Desktop\\JAVA401\\classcode\\quotes\\app\\src\\main\\resources\\recentquotes.json"));
+            reader = new BufferedReader(new FileReader(path));
             newLine = reader.readLine();
-            System.out.println(newLine);
+
 
             while (newLine != null) {
                 sumLins += newLine + "\n";
@@ -126,10 +101,11 @@ public class App {
         return sumLins;
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    public static ArrayList qouteGson(String  gsonD){
+    public static ArrayList qouteGson(String gsonD){
         Gson gson =new Gson ();
         ArrayList qoutandAoutherstr = gson.fromJson(gsonD, ArrayList.class);
         return qoutandAoutherstr;
     }
+
 }
 
